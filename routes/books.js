@@ -11,21 +11,6 @@ router.get('/', async (req, res) => {
     }
 })
 
-router.get("/:isbn", async (req, res)=>{
-    const { isbn } = req.params
-
-    try {
-        const libro = await prisma.libro.findUnique({
-            where: {
-                ISBN: isbn
-            }
-        })
-        res.send(libro)
-    } catch (error) {
-        console.error(error)
-    }
-})
-
 router.get("/author/:author", async (req, res)=>{
     const { author } = req.params
 
@@ -57,5 +42,34 @@ router.get("/prices/:price", async (req,res)=>{
         console.error(error)
     }
 })
+
+router.get('/with-sales', async (req, res) => {
+    try {
+        const join = await prisma.libro.findMany({
+            include:{
+                Ventas: true
+            }
+        })
+        res.send(join)
+    } catch (error) {
+        console.error(error)
+    }
+})
+
+router.get("/:isbn", async (req, res)=>{
+    const { isbn } = req.params
+
+    try {
+        const libro = await prisma.libro.findUnique({
+            where: {
+                ISBN: isbn
+            }
+        })
+        res.send(libro)
+    } catch (error) {
+        console.error(error)
+    }
+})
+
 
 module.exports = router;
